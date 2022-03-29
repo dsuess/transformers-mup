@@ -3,6 +3,6 @@ datasets
 mup
 ray[tune]>=1.11
 hyperopt
-typer
-google-api-python-client 
+typer<0.4
+google-api-python-client
 cryptography
