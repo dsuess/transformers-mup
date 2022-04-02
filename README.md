@@ -6,13 +6,13 @@ Thanks to the [TPU Research cloud](https://sites.research.google/trc/about/) for
 
 ## Steps
 
-- Install gcloud, set the default region to where your free TPUs are located and make sure you're using the correct project. If you don't get this right, we will launch TPUs in non-free zones, which can get \$\$\$. Below, we'll use v2-8 instances, which for me are located in `us-central1-f`.
+- Install gcloud, set the default region to where your free TPUs are located and make sure you're using the correct project.
 ```
 (local) $ gcloud config set compute/region us-central1
 (local) $ gcloud config set compute/zone us-central1-f
 ```
 
-- Create a VM used for launching everything. We give this VM full google-cloud permissions to simplify the instructions, so use with care!
+- Create a VM used for launching everything. We give this VM full google-cloud permissions to simplify the instructions and not have to worry about permission-settings. Use with care!
 ```
 (local) $ gcloud compute instances create interactive-vm \
     --image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20220308 \
@@ -29,7 +29,7 @@ Thanks to the [TPU Research cloud](https://sites.research.google/trc/about/) for
 - Clone the repo and setup environment:
 
 ```
-$ git clone https://github.com/dsuess/transformers-mup -b TODO
+$ git clone https://github.com/dsuess/transformers-mup -b ray-on-tpu
 $ cd transformers-mup
 $ sudo apt update && sudo apt install -y python3-pip
 $ python3 -m pip install -r requirements.txt
@@ -37,13 +37,14 @@ $ echo "export PATH=$HOME/.local/bin:\$PATH" >> $HOME/.bashrc
 $ source $HOME/.bashrc
 ```
 
-- edit the `cluster.yaml` file, things you need to change: `provider.project_id`, `max_workers`
+- edit the `cluster.yaml` file, things you need to change: `provider.project_id`, `region`, and `availability_zone`
+- If you don't get this right, we will launch TPUs in non-free zones, which can get \$\$\$. The `cluster.yaml` is configured for `v2-8` TPUs under `available_node_types.ray_tpu.node_config.acceleratorType`. If you want to try getting a hold of `v3-8` TPUs, make sure to also change the region. Otherwise \$\$\$!
 - launch the cluster (this can take a while, you need to confirm generation of head node)
 ```
 $ ray up cluster.yaml
 ```
 
-- note the address under "To connect to this Ray runtime from another node, run", use that command to connect to cluster
+- note the address under "To connect to this Ray runtime from another node, run", use that command to connect to cluster. Yours might have a different address and redis-password.
 ```
 $ ray start --address='10.128.15.199:6379' --redis-password='5241590000000000'
 ```

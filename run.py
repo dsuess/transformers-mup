@@ -91,7 +91,6 @@ def tune(address: str = None, not_distributed: bool = False):
         scheduler=ASHAScheduler(metric="eval_loss", mode="min"),
         local_dir="/tmp",
     )
-    print(analysis.best_dataframe)
 
 
 if __name__ == "__main__":
